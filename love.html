@@ -1,0 +1,604 @@
+><!DOCTYPE html>
+<html lang="zh-CN">
+<head><script>try{if(localStorage.getItem('yy_unlocked')==='1'){document.documentElement.removeAttribute('data-yy-locked')}else{document.documentElement.setAttribute('data-yy-locked','')}}catch(e){document.documentElement.setAttribute('data-yy-locked','')}</script><style>[data-yy-locked] body>*:not(#yy-gate){visibility:hidden}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#f6f4ed">
+    <title>幽幽的私人小窝</title>
+    <style>
+        :root {
+            --bg: #f6f4ed;
+            --paper: #fffefa;
+            --green: #788b72;
+            --green-dark: #4e624b;
+            --green-light: #e8eee3;
+            --ink: #394439;
+            --muted: #818579;
+            --line: #e0e4d9;
+            --danger: #c97c7c;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0; min-height: 100vh;
+            background-color: var(--bg);
+            background-image: radial-gradient(#d5d8cf 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding-bottom: 70px;
+        }
+        .view-container { display: none; max-width: 600px; margin: 0 auto; padding: 20px 16px; animation: fadeIn 0.3s; }
+        .view-container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 新增：顶部图片卡片样式 */
+        .hero-card {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* ⚠️ 注意：这里填你的图片名字 */
+            background-image: url(img/02.jpg); 
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* 加一层黑色渐变，让上面的白字看得清楚 */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
+            z-index: 2;
+        }
+        .hero-content { position: relative; z-index: 3; text-align: center; color: #fff; }
+        .hero-content h1 { font-size: 22px; font-weight: normal; margin: 0 0 10px 0; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .days-num { font-size: 65px; font-weight: bold; line-height: 1; margin: 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .days-num small { font-size: 20px; font-weight: normal; margin-left: 5px; }
+
+        .card {
+            background: var(--paper); border-radius: 16px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--line);
+            margin-bottom: 16px;
+        }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { font-size: 26px; color: var(--green-dark); margin: 0 0 6px 0; font-weight: normal; letter-spacing: 1px; }
+        .header p { font-size: 13px; color: var(--muted); margin: 0; }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--paper);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-around;
+            padding: 10px 0 15px 0; z-index: 100; border-top: 1px solid var(--line);
+        }
+        .nav-btn {
+            background: none; border: none; color: var(--muted); font-size: 12px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+        }
+        .nav-btn.active { color: var(--green-dark); font-weight: bold; }
+        .nav-btn .icon { font-size: 20px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+        input, textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px;
+            font-size: 15px; color: var(--ink); background: var(--bg); outline: none; font-family: inherit;
+        }
+        input:focus, textarea:focus { border-color: var(--green); background: #fff; }
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--green); color: #fff; font-size: 15px; cursor: pointer; }
+        .btn:active { transform: scale(0.98); }
+        .btn.secondary { background: var(--green-light); color: var(--green-dark); }
+
+        .love-quote { 
+            text-align: center; color: var(--green); font-size: 14px; 
+            margin: 20px 0; padding: 15px; background: var(--green-light); 
+            border-radius: 12px; cursor: pointer; position: relative;
+        }
+        .love-quote::after { content: "点我换一句"; position: absolute; bottom: 2px; right: 8px; font-size: 10px; color: var(--muted); opacity: 0.5; }
+
+        .mood-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .mood-item { background: var(--bg); padding: 12px; border-radius: 12px; text-align: left; cursor: pointer; }
+        .mood-item .label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+        .mood-item .value { font-size: 14px; font-weight: bold; color: var(--green-dark); }
+
+        .slack-row { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--line); }
+        .slack-btn { padding: 8px 16px; border-radius: 20px; background: var(--ink); color: #fff; border: none; cursor: pointer; font-size: 13px; }
+        .slack-btn.checked { background: var(--green-light); color: var(--green-dark); }
+
+        .diary-item { background: var(--paper); padding: 15px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 10px; }
+        .diary-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+        .del-btn { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 12px; }
+
+        .progress-text { display: flex; justify-content: space-between; font-size: 14px; color: var(--green-dark); margin-bottom: 8px; font-weight: 600; }
+        .progress-bar-bg { width: 100%; height: 12px; background: var(--green-light); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #9cb195, var(--green)); transition: width 0.8s ease; }
+        .amount-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; }
+        .amount-label { font-size: 12px; color: var(--muted); }
+        .amount-val { font-size: 16px; font-weight: bold; }
+        .amount-val.highlight { color: var(--green); font-size: 20px; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+        .item-title { font-size: 15px; font-weight: 600; }
+        .item-date { font-size: 12px; color: var(--muted); }
+        .item-amount { font-size: 16px; font-weight: bold; color: var(--green); margin-right: 12px; }
+
+        /* ===== 记账本 ===== */
+        .ledger-sum { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+        .ledger-sum > div { background:var(--bg); border-radius:12px; padding:12px 6px; text-align:center; }
+        .ledger-sum .ls-label { font-size:11px; color:var(--muted); margin-bottom:5px; }
+        .ledger-sum .ls-val { font-size:15px; font-weight:700; color:var(--green-dark); }
+        .ledger-sum .ls-val.out { color:#b06a6a; } .ledger-sum .ls-val.in { color:#5d8a72; }
+        .type-row { display:flex; gap:8px; margin-bottom:14px; }
+        .type-btn { flex:1; padding:9px; border:1px solid var(--line); border-radius:999px; background:#fff;
+            color:var(--muted); font-family:inherit; font-size:13px; cursor:pointer; }
+        .type-btn.on { background:var(--green-dark); border-color:var(--green-dark); color:#fff; font-weight:600; }
+        .cat-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+        .cat { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px;
+            padding:6px 11px; font-size:12px; font-family:inherit; cursor:pointer; }
+        .cat.on { background:var(--green-light); border-color:var(--green); color:var(--green-dark); font-weight:600; }
+        .ledger-toast { display:none; background:var(--green-light); border:1px solid var(--green);
+            border-radius:14px; padding:12px 14px; margin-bottom:14px; }
+        .toast-line { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; font-size:14px; }
+        .toast-line b { font-size:18px; color:var(--green-dark); }
+        .toast-line span { color:var(--ink); }
+        .toast-sub { font-size:11px; color:var(--muted); margin-top:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .toast-sub button { border:0; background:var(--green-dark); color:#fff; border-radius:999px;
+            padding:4px 12px; font-size:11px; font-family:inherit; cursor:pointer; }
+        .filter-row { display:flex; gap:6px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+        .filter-row .cat { font-size:11px; padding:5px 10px; }
+        .filter-row input { flex:1 1 120px; min-width:0; padding:8px 10px; font-size:13px; }
+        .ledger-item { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px dashed var(--line); }
+        .li-ico { width:34px; height:34px; border-radius:50%; background:var(--bg); display:flex;
+            align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+        .li-main { flex:1; min-width:0; }
+        .li-title { font-size:14px; font-weight:600; color:var(--ink); }
+        .li-sub { font-size:10px; color:var(--muted); margin-top:3px; }
+        .li-src { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:1px 6px; font-size:9px; color:var(--muted); }
+        .li-amt { font-size:15px; font-weight:700; white-space:nowrap; }
+        .li-amt.out { color:#b06a6a; } .li-amt.in { color:#5d8a72; }
+        .li-del { border:0; background:transparent; color:var(--danger); font-size:11px; cursor:pointer; font-family:inherit; }
+        .src-hint { font-size:11px; color:var(--muted); line-height:1.7; margin-top:10px; }
+    </style>
+</head>
+<body><script>
+(function(){
+  var UNLOCK_KEY='yy_unlocked';
+  var HASH='b5c421dd84a0cf6bee896d6c16dbb5ba849c62122f7f6e4beaee6d4cbc7afdf8';
+  function isUnlocked(){try{return localStorage.getItem(UNLOCK_KEY)==='1'}catch(e){return false}}
+  function unlock(){try{localStorage.setItem(UNLOCK_KEY,'1')}catch(e){};document.documentElement.removeAttribute('data-yy-locked');var g=document.getElementById('yy-gate');if(g&&g.parentNode)g.parentNode.removeChild(g)}
+  function hex(b){var a=new Uint8Array(b),s='';for(var i=0;i<a.length;i++)s+=('0'+a[i].toString(16)).slice(-2);return s}
+  function gate(){
+    if(document.getElementById('yy-gate'))return;
+    var g=document.createElement('div');g.id='yy-gate';
+    g.setAttribute('style','position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background-color:#f6f4ed;background-image:radial-gradient(#d5d8cf 1px,transparent 1px);background-size:20px 20px;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-tap-highlight-color:transparent');
+    g.innerHTML='<div style="width:min(300px,88vw);background:#fffefa;border:1px solid #e0e4d9;border-radius:18px;padding:26px 22px;box-shadow:0 12px 34px rgba(78,98,75,.14);text-align:center">'+
+      '<div style="font-size:13px;letter-spacing:4px;color:#a8ada2;margin-bottom:6px">YOUYOU</div>'+
+      '<div style="font-size:18px;letter-spacing:2px;color:#4e624b;font-weight:600;margin-bottom:16px">幽幽的小窝</div>'+
+      '<input id="yy-pw" type="password" placeholder="密码" autocomplete="off" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e0e4d9;border-radius:12px;font-size:15px;outline:none;background:#fff;color:#394439" />'+
+      '<button id="yy-go" type="button" style="width:100%;margin-top:12px;padding:11px;border:none;border-radius:12px;background:#788b72;color:#fff;font-size:15px;letter-spacing:2px;cursor:pointer">进 入</button>'+
+      '<div id="yy-err" style="margin-top:9px;font-size:12px;color:#c97c7c;min-height:17px"></div>'+
+      '</div>';
+    document.body.appendChild(g);
+    var pw=document.getElementById('yy-pw'),err=document.getElementById('yy-err');
+    function check(){
+      var v=pw.value||'';
+      if(!v){err.textContent='先输入密码哦';return;}
+      if(!window.crypto||!window.crypto.subtle){err.textContent='请用 https 打开这个页面';return;}
+      crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(function(b){
+        if(hex(b)===HASH){unlock()}else{err.textContent='密码不对，再想想 :)';pw.value='';pw.focus()}
+      }).catch(function(){err.textContent='出错了，刷新试试'});
+    }
+    document.getElementById('yy-go').addEventListener('click',check);
+    pw.addEventListener('keydown',function(e){if(e.key==='Enter')check()});
+    setTimeout(function(){try{pw.focus()}catch(e){}},60);
+  }
+  if(isUnlocked()){
+    if(document.documentElement.hasAttribute('data-yy-locked'))document.documentElement.removeAttribute('data-yy-locked');
+    return;
+  }
+  if(document.body){gate()}else{document.addEventListener('DOMContentLoaded',gate)}
+})();
+</script>
+
+    <!-- 页面 1：主页 -->
+    <div class="view-container active" id="view-home">
+        <!-- 顶部的图片卡片 -->
+        <div class="hero-card">
+            <div class="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>我们的温柔时光</h1>
+                <div class="days-num" id="days">0<small>天</small></div>
+                <p style="font-size: 13px; opacity: 0.9; margin: 0;" id="hero-date-text">从选定纪念日的那天开始</p>
+            </div>
+        </div>
+
+        <div class="love-quote" id="daily-quote" onclick="changeQuote()">
+            “有你在的日子，就是最好的日子。”
+        </div>
+
+        <div class="card">
+            <div class="mood-grid">
+                <div class="mood-item" onclick="editMood('memo')">
+                    <div class="label">今日备忘</div>
+                    <div class="value" id="home-memo">点这里记一句话</div>
+                </div>
+                <div class="mood-item" onclick="editMood('mood')">
+                    <div class="label">今天的心情</div>
+                    <div class="value" id="home-mood">点一下选心情</div>
+                </div>
+            </div>
+            <div class="slack-row">
+                <div>
+                    <div style="font-size: 13px; font-weight: bold;">和 TA 一起摸鱼</div>
+                    <div style="font-size: 12px; color: var(--muted);">已摸鱼 <span id="slack-days" style="color: var(--ink); font-weight: bold;">0</span> 天</div>
+                </div>
+                <button class="slack-btn" id="slack-btn" onclick="toggleSlack()">摸鱼 +1</button>
+            </div>
+        </div>
+
+        <section class="card">
+            <details>
+                <summary style="color:var(--green); cursor:pointer; font-size:14px;">⚙ 修改纪念日</summary>
+                <div style="margin-top:15px;">
+                    <input type="date" id="start-date" style="margin-bottom:10px;">
+                    <button class="btn secondary" id="save-date">保存纪念日</button>
+                </div>
+            </details>
+        </section>
+    </div>
+
+    <!-- 页面 2：日记 -->
+    <div class="view-container" id="view-diary">
+        <header class="header"><h1>专属日记</h1><p>写下今天的心情吧</p></header>
+        <div class="card">
+            <form id="diary-form">
+                <div class="form-group"><input type="text" id="diary-title" placeholder="今天的主题..." maxlength="50"></div>
+                <div class="form-group"><textarea id="diary-content" rows="4" placeholder="这里没有别人，慢慢写..." required></textarea></div>
+                <button type="submit" class="btn">收藏这篇日记</button>
+            </form>
+        </div>
+        <div id="diary-list"></div>
+    </div>
+
+    <!-- 页面 3：记账本 -->
+    <div class="view-container" id="view-money">
+        <header class="header"><h1>小账本</h1><p>每一笔都留着来源，记错了马上撤销</p></header>
+
+        <div class="card">
+            <div class="ledger-sum">
+                <div><div class="ls-label">本月支出</div><div class="ls-val out" id="ledger-exp">¥0.00</div></div>
+                <div><div class="ls-label">本月收入</div><div class="ls-val in" id="ledger-inc">¥0.00</div></div>
+                <div><div class="ls-label">本月结余</div><div class="ls-val" id="ledger-net">¥0.00</div></div>
+            </div>
+            <div class="type-row">
+                <button class="type-btn on" id="ledger-type-expense" onclick="setLedgerType('expense')">－ 支出</button>
+                <button class="type-btn" id="ledger-type-income" onclick="setLedgerType('income')">＋ 收入</button>
+            </div>
+            <div class="cat-row" id="ledger-cats"></div>
+            <div class="form-group"><input type="number" id="ledger-amount" placeholder="金额（元）" step="0.01" min="0"></div>
+            <div class="form-group"><input type="text" id="ledger-note" placeholder="备注，比如「楼下的咖啡」" maxlength="40"></div>
+            <div class="form-group"><input type="date" id="ledger-date"></div>
+            <div class="form-group"><input type="text" id="ledger-source" placeholder="记录来源（默认：手动）" maxlength="20"></div>
+            <button class="btn" onclick="addLedger()">记这一笔</button>
+            <div class="src-hint">来源可以写「手动」，也可以写是帮你记的那位；不想让谁记，把来源空着就好。记完会弹一张小卡片，点「撤销」立刻反悔。</div>
+        </div>
+
+        <div class="ledger-toast" id="ledger-toast"></div>
+
+        <div class="card">
+            <h3 style="color:var(--green-dark); margin:0 0 12px; font-size:16px;">收支流水</h3>
+            <div class="filter-row">
+                <button class="cat on" id="lf-all" onclick="setLedgerFilter('all')">全部</button>
+                <button class="cat" id="lf-expense" onclick="setLedgerFilter('expense')">支出</button>
+                <button class="cat" id="lf-income" onclick="setLedgerFilter('income')">收入</button>
+                <input type="text" id="ledger-search" placeholder="搜备注 / 分类 / 来源" oninput="renderLedger()">
+            </div>
+            <div id="ledger-list"></div>
+        </div>
+    </div>
+
+    <!-- 页面 4：数据 -->
+    <div class="view-container" id="view-data">
+        <header class="header"><h1>数据管理</h1><p>保护好你的珍贵回忆</p></header>
+        <div class="card">
+            <p style="font-size:13px; color:var(--danger); line-height:1.6;">账本、日记、纪念日都在这一份备份里。<br>⚠️ 数据保存在当前浏览器中。清理缓存或换手机可能导致数据丢失，请务必定期导出备份！</p>
+            <button class="btn secondary" style="margin-bottom:10px;" onclick="exportData()">导出 JSON 备份</button>
+            <div style="position: relative; margin-top:10px;">
+                <input type="file" id="import-file" accept=".json" style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;">
+                <button class="btn" style="background:var(--green-dark);">导入 JSON 备份</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn active" onclick="switchView('home', this)"><span class="icon">🏠</span><span>主页</span></button>
+        <button class="nav-btn" onclick="switchView('diary', this)"><span class="icon">📝</span><span>日记</span></button>
+        <button class="nav-btn" onclick="switchView('money', this)"><span class="icon">🧾</span><span>账本</span></button>
+        <button class="nav-btn" onclick="switchView('data', this)"><span class="icon">💾</span><span>数据</span></button>
+    </div>
+
+<script>
+    const STORAGE_KEY = 'yoyo_combined_data';
+    let appData = { 
+        startDate: new Date().toISOString().split('T')[0], 
+        diaries: [], 
+        money: { goal: 800000, monthlyPlan: 1000, records: [] },
+        ledger: { records: [] },
+        daily: { date: '', memo: '', mood: '', slacked: false, totalSlackDays: 0 } 
+    };
+
+    const quotes = [
+        "“有你在的日子，就是最好的日子。”",
+        "“想和你一起，把普通的日子过得浪漫些。”",
+        "“今天也是超级喜欢你的一天。”",
+        "“不管多久，我都想和你在一起。”",
+        "“你是我的今天，以及所有的明天。”",
+        "“别担心，世界不会一直糟糕，你也不会一直孤单。”"
+    ];
+
+    function loadData() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try { 
+                const parsed = JSON.parse(saved);
+                if(parsed.money || parsed.ledger) appData = parsed;
+            } catch(e) {}
+        }
+        // 旧的「80 万计划」存款流水，原封不动转成收入，不丢一笔
+        if(!appData.ledger){
+            appData.ledger = { records: [] };
+            if(appData.money && appData.money.records && appData.money.records.length){
+                appData.ledger.records = appData.money.records.map(r => ({
+                    id: r.id, type: 'income', amount: Number(r.amount), category: '旧存款',
+                    note: r.note || '存款', date: r.date, source: '80万计划迁移',
+                    time: (new Date(r.date).getTime() || Date.now())
+                }));
+            }
+        }
+        // 花园里写的心情日记，也一起汇到这本日记里看
+        try{
+            const g = JSON.parse(localStorage.getItem('yoyo_emotion_diary_v1') || '[]');
+            const have = new Set(appData.diaries.map(d => String(d.time)));
+            g.forEach(x => { if(!have.has(String(x.id)) && !have.has(String(new Date(x.time).getTime())))
+                appData.diaries.push({ time: new Date(x.time).getTime() || x.id, date: (x.time||'').slice(0,10) || '', title:'花园 · 心情', content: x.text, from:'花园' }); });
+        }catch(e){}
+        
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (appData.daily.date !== todayStr) {
+            appData.daily.date = todayStr;
+            appData.daily.memo = '点这里记一句话';
+            appData.daily.mood = '点一下选心情';
+            appData.daily.slacked = false;
+            saveData();
+        }
+
+        document.getElementById('start-date').value = appData.startDate;
+        document.getElementById('ledger-date').value = todayStr;
+        
+        document.getElementById('home-memo').textContent = appData.daily.memo;
+        document.getElementById('home-mood').textContent = appData.daily.mood;
+        document.getElementById('slack-days').textContent = appData.daily.totalSlackDays;
+        
+        const slackBtn = document.getElementById('slack-btn');
+        if(appData.daily.slacked) {
+            slackBtn.textContent = '✓ 已打卡';
+            slackBtn.classList.add('checked');
+        } else {
+            slackBtn.textContent = '摸鱼 +1';
+            slackBtn.classList.remove('checked');
+        }
+
+        renderAll();
+    }
+
+    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); renderAll(); }
+
+    function switchView(viewId, btn) {
+        document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${viewId}`).classList.add('active');
+        btn.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function changeQuote() {
+        const q = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById('daily-quote').textContent = q;
+    }
+
+    function editMood(type) {
+        if (type === 'memo') {
+            const memo = prompt("今天想记点什么？", appData.daily.memo === '点这里记一句话' ? '' : appData.daily.memo);
+            if (memo !== null) appData.daily.memo = memo || '点这里记一句话';
+        } else {
+            const mood = prompt("今天心情怎么样？", appData.daily.mood === '点一下选心情' ? '' : appData.daily.mood);
+            if (mood !== null) appData.daily.mood = mood || '点一下选心情';
+        }
+        saveData();
+    }
+
+    function toggleSlack() {
+        if (!appData.daily.slacked) {
+            appData.daily.slacked = true;
+            appData.daily.totalSlackDays += 1;
+            saveData();
+            loadData(); 
+        } else {
+            alert('今天已经摸过鱼啦，明天再来吧~');
+        }
+    }
+
+    function renderCountdown() {
+        const start = new Date(appData.startDate + 'T00:00:00');
+        const now = new Date(); now.setHours(0,0,0,0);
+        const diff = Math.max(0, now - start);
+        document.getElementById('days').innerHTML = Math.floor(diff / 86400000) + '<small>天</small>';
+        document.getElementById('hero-date-text').textContent = `从 ${start.getFullYear()}年${start.getMonth()+1}月${start.getDate()}日 开始`;
+    }
+    document.getElementById('save-date').onclick = () => {
+        const d = document.getElementById('start-date').value;
+        if(d) { appData.startDate = d; saveData(); alert('已更新'); }
+    };
+
+    document.getElementById('diary-form').onsubmit = (e) => {
+        e.preventDefault();
+        const title = document.getElementById('diary-title').value.trim();
+        const content = document.getElementById('diary-content').value.trim();
+        if (!content) return;
+        appData.diaries.push({ time: Date.now(), date: new Date().toISOString().split('T')[0], title: title || '无题', content });
+        document.getElementById('diary-title').value = ''; document.getElementById('diary-content').value = '';
+        saveData();
+    };
+    function deleteDiary(t) { if(confirm('删除日记？')){ appData.diaries = appData.diaries.filter(d => d.time !== t); saveData(); } }
+    
+    function renderDiaries() {
+        const list = document.getElementById('diary-list'); list.innerHTML = '';
+        const all = [...appData.diaries];
+        // 花园那边新写的也即时并进来，两边不再各记各的
+        try{
+            const g = JSON.parse(localStorage.getItem('yoyo_emotion_diary_v1') || '[]');
+            g.forEach(x => all.push({ time: new Date(x.time).getTime() || x.id,
+                date: (x.time||'').slice(0,10) || '', title: '花园 · 心情', content: x.text, from: '花园', readonly: true }));
+        }catch(e){}
+        const seen = new Set();
+        all.sort((x,y)=>Number(y.time)-Number(x.time)).forEach(item => {
+            const key = (item.date||'') + '|' + (item.content||'');
+            if(seen.has(key)) return; seen.add(key);
+            const div = document.createElement('div'); div.className = 'diary-item';
+            const meta = document.createElement('div'); meta.className = 'diary-meta';
+            const dateSpan = document.createElement('span');
+            dateSpan.textContent = (item.date || '') + (item.from ? ' · ' + item.from : '');
+            meta.appendChild(dateSpan);
+            if(!item.readonly){
+                const delBtn = document.createElement('button'); delBtn.className = 'del-btn';
+                delBtn.textContent = '删除'; delBtn.onclick = () => deleteDiary(item.time);
+                meta.appendChild(delBtn);
+            }
+            const h4 = document.createElement('h4');
+            h4.style.cssText = 'margin:0 0 5px;color:var(--green-dark)'; h4.textContent = item.title || '无题';
+            const p = document.createElement('p');
+            p.style.cssText = 'margin:0;font-size:14px;white-space:pre-wrap'; p.textContent = item.content || '';
+            div.append(meta, h4, p); list.appendChild(div);
+        });
+        if(!list.children.length) list.innerHTML = '<p style="text-align:center;color:var(--muted);font-size:13px;">还没写过日记，去花园或这里写第一篇吧。</p>';
+    }
+
+    const LEDGER_CATS = {
+        expense: [['🍚','餐饮'],['🚌','交通'],['🛍','购物'],['🏠','居家'],['🎮','娱乐'],['💊','医疗'],['📦','其他']],
+        income:  [['💰','工资'],['🧧','红包'],['🎁','礼金'],['📈','理财'],['📦','其他']]
+    };
+    let ledgerType = 'expense', ledgerCat = '餐饮', ledgerFilter = 'all';
+    const moneyTxt = n => '¥' + Number(n || 0).toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    function catIcon(name){
+        for(const k in LEDGER_CATS){ const hit = LEDGER_CATS[k].find(c => c[1] === name); if(hit) return hit[0]; }
+        return '📦';
+    }
+    function renderLedgerCats(){
+        document.getElementById('ledger-cats').innerHTML = LEDGER_CATS[ledgerType]
+            .map(c => `<button type="button" class="cat ${c[1]===ledgerCat?'on':''}" onclick="setLedgerCat('${c[1]}')">${c[0]} ${c[1]}</button>`).join('');
+    }
+    function setLedgerType(t){
+        ledgerType = t; ledgerCat = LEDGER_CATS[t][0][1];
+        document.getElementById('ledger-type-expense').classList.toggle('on', t === 'expense');
+        document.getElementById('ledger-type-income').classList.toggle('on', t === 'income');
+        renderLedgerCats();
+    }
+    function setLedgerCat(n){ ledgerCat = n; renderLedgerCats(); }
+    function setLedgerFilter(f){
+        ledgerFilter = f;
+        ['all','expense','income'].forEach(k => document.getElementById('lf-' + k).classList.toggle('on', k === f));
+        renderLedger();
+    }
+    function addLedger(){
+        const amt = parseFloat(document.getElementById('ledger-amount').value);
+        if(!amt || amt <= 0){ alert('先写一个金额吧'); return; }
+        const date = document.getElementById('ledger-date').value || new Date().toISOString().split('T')[0];
+        const note = document.getElementById('ledger-note').value.trim();
+        const srcn = document.getElementById('ledger-source').value.trim() || '手动';
+        const rec = { id: Date.now() + Math.random().toString(16).slice(2,6), type: ledgerType,
+            amount: amt, category: ledgerCat, note: note || ledgerCat, date, source: srcn, time: Date.now() };
+        appData.ledger.records.unshift(rec);
+        document.getElementById('ledger-amount').value = '';
+        document.getElementById('ledger-note').value = '';
+        saveData();
+        showLedgerToast(rec);
+    }
+    function showLedgerToast(r){
+        const t = document.getElementById('ledger-toast');
+        t.innerHTML = `<div class="toast-line"><b>${r.type==='income'?'＋':'－'}${moneyTxt(r.amount)}</b>
+            <span>${catIcon(r.category)} ${r.category} · ${r.note}</span></div>
+            <div class="toast-sub">来源：${r.source} · ${r.date}
+            <button onclick="undoLedger('${r.id}')">↩ 撤销这笔</button></div>`;
+        t.style.display = 'block';
+        if(window.__ledgerTimer) clearTimeout(window.__ledgerTimer);
+        window.__ledgerTimer = setTimeout(() => { t.style.display = 'none'; }, 15000);
+    }
+    function undoLedger(id){
+        appData.ledger.records = appData.ledger.records.filter(r => String(r.id) !== String(id));
+        saveData();
+        document.getElementById('ledger-toast').style.display = 'none';
+    }
+    function deleteLedger(id){
+        if(confirm('删掉这一笔？')){
+            appData.ledger.records = appData.ledger.records.filter(r => String(r.id) !== String(id));
+            saveData();
+        }
+    }
+    function renderLedger(){
+        const now = new Date();
+        const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+        let inc = 0, exp = 0;
+        appData.ledger.records.forEach(r => {
+            if(String(r.date || '').indexOf(ym) === 0){
+                if(r.type === 'income') inc += Number(r.amount); else exp += Number(r.amount);
+            }
+        });
+        document.getElementById('ledger-exp').textContent = moneyTxt(exp);
+        document.getElementById('ledger-inc').textContent = moneyTxt(inc);
+        document.getElementById('ledger-net').textContent = moneyTxt(inc - exp);
+        const kw = (document.getElementById('ledger-search').value || '').trim().toLowerCase();
+        const box = document.getElementById('ledger-list');
+        const arr = appData.ledger.records.filter(r =>
+            (ledgerFilter === 'all' || r.type === ledgerFilter) &&
+            (!kw || ((r.note||'') + (r.category||'') + (r.source||'')).toLowerCase().indexOf(kw) >= 0));
+        box.innerHTML = arr.length ? arr.map(r => `
+            <div class="ledger-item">
+                <div class="li-ico">${catIcon(r.category)}</div>
+                <div class="li-main"><div class="li-title">${r.note || r.category}</div>
+                    <div class="li-sub">${r.date} · ${r.category} <span class="li-src">${r.source || '手动'}</span></div></div>
+                <div class="li-amt ${r.type==='income'?'in':'out'}">${r.type==='income'?'+':'−'}${moneyTxt(r.amount)}</div>
+                <button class="li-del" onclick="deleteLedger('${r.id}')">删</button>
+            </div>`).join('')
+            : '<p style="text-align:center;color:var(--muted);font-size:13px;">这里还空空的，记一笔吧。</p>';
+    }
+
+    function exportData() {
+        const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `幽幽小窝备份_${new Date().toISOString().split('T')[0]}.json`; a.click();
+    }
+    document.getElementById('import-file').onchange = function(e) {
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if(data.startDate && confirm("覆盖当前数据？")) { appData = data; saveData(); loadData(); alert('导入成功'); }
+                else alert("文件格式错误");
+            } catch(err) { alert("解析失败"); }
+            e.target.value = '';
+        };
+        reader.readAsText(file);
+    };
+
+    function renderAll() { renderCountdown(); renderDiaries(); renderLedgerCats(); renderLedger(); }
+    loadData();
+</script>
+</body>
+</html>
