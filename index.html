@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><script>try{if(localStorage.getItem('yy_unlocked')==='1'){document.documentElement.removeAttribute('data-yy-locked')}else{document.documentElement.setAttribute('data-yy-locked','')}}catch(e){document.documentElement.setAttribute('data-yy-locked','')}</script><style>[data-yy-locked] body>*:not(#yy-gate){visibility:hidden}</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f4ed">
+<title>幽幽的小窝</title>
+<style>
+:root{--bg:#f6f4ed;--paper:#fffefa;--green:#788b72;--green-dark:#4e624b;--green-light:#e8eee3;--ink:#394439;--muted:#818579;--line:#e0e4d9}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background-color:var(--bg);background-image:radial-gradient(#d5d8cf 1px,transparent 1px);background-size:20px 20px;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;padding:calc(28px + env(safe-area-inset-top)) 18px calc(40px + env(safe-area-inset-bottom))}
+.wrap{max-width:520px;margin:0 auto}
+h1{font-size:24px;letter-spacing:3px;margin:0 0 6px;color:var(--green-dark);font-weight:600}
+.sub{font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:26px}
+.card{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px 18px;margin-bottom:14px;box-shadow:0 6px 20px rgba(78,98,75,.07);transition:.2s}
+.card:active{transform:scale(.985)}
+.card .ico{font-size:26px;display:block;margin-bottom:10px}
+.card strong{display:block;font-size:17px;color:var(--green-dark);margin-bottom:6px}
+.card small{display:block;font-size:12.5px;color:var(--muted);line-height:1.6}
+.foot{text-align:center;font-size:11.5px;color:#a8ada2;margin-top:26px;letter-spacing:.5px}
+</style>
+</head>
+<body><script>
+(function(){
+  var UNLOCK_KEY='yy_unlocked';
+  var HASH='b5c421dd84a0cf6bee896d6c16dbb5ba849c62122f7f6e4beaee6d4cbc7afdf8';
+  function isUnlocked(){try{return localStorage.getItem(UNLOCK_KEY)==='1'}catch(e){return false}}
+  function unlock(){try{localStorage.setItem(UNLOCK_KEY,'1')}catch(e){};document.documentElement.removeAttribute('data-yy-locked');var g=document.getElementById('yy-gate');if(g&&g.parentNode)g.parentNode.removeChild(g)}
+  function hex(b){var a=new Uint8Array(b),s='';for(var i=0;i<a.length;i++)s+=('0'+a[i].toString(16)).slice(-2);return s}
+  function gate(){
+    if(document.getElementById('yy-gate'))return;
+    var g=document.createElement('div');g.id='yy-gate';
+    g.setAttribute('style','position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background-color:#f6f4ed;background-image:radial-gradient(#d5d8cf 1px,transparent 1px);background-size:20px 20px;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-tap-highlight-color:transparent');
+    g.innerHTML='<div style="width:min(300px,88vw);background:#fffefa;border:1px solid #e0e4d9;border-radius:18px;padding:26px 22px;box-shadow:0 12px 34px rgba(78,98,75,.14);text-align:center">'+
+      '<div style="font-size:13px;letter-spacing:4px;color:#a8ada2;margin-bottom:6px">YOUYOU</div>'+
+      '<div style="font-size:18px;letter-spacing:2px;color:#4e624b;font-weight:600;margin-bottom:16px">幽幽的小窝</div>'+
+      '<input id="yy-pw" type="password" placeholder="密码" autocomplete="off" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e0e4d9;border-radius:12px;font-size:15px;outline:none;background:#fff;color:#394439" />'+
+      '<button id="yy-go" type="button" style="width:100%;margin-top:12px;padding:11px;border:none;border-radius:12px;background:#788b72;color:#fff;font-size:15px;letter-spacing:2px;cursor:pointer">进 入</button>'+
+      '<div id="yy-err" style="margin-top:9px;font-size:12px;color:#c97c7c;min-height:17px"></div>'+
+      '</div>';
+    document.body.appendChild(g);
+    var pw=document.getElementById('yy-pw'),err=document.getElementById('yy-err');
+    function check(){
+      var v=pw.value||'';
+      if(!v){err.textContent='先输入密码哦';return;}
+      if(!window.crypto||!window.crypto.subtle){err.textContent='请用 https 打开这个页面';return;}
+      crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(function(b){
+        if(hex(b)===HASH){unlock()}else{err.textContent='密码不对，再想想 :)';pw.value='';pw.focus()}
+      }).catch(function(){err.textContent='出错了，刷新试试'});
+    }
+    document.getElementById('yy-go').addEventListener('click',check);
+    pw.addEventListener('keydown',function(e){if(e.key==='Enter')check()});
+    setTimeout(function(){try{pw.focus()}catch(e){}},60);
+  }
+  if(isUnlocked()){
+    if(document.documentElement.hasAttribute('data-yy-locked'))document.documentElement.removeAttribute('data-yy-locked');
+    return;
+  }
+  if(document.body){gate()}else{document.addEventListener('DOMContentLoaded',gate)}
+})();
+</script>
+<div class="wrap">
+  <h1>幽幽的小窝</h1>
+  <p class="sub">点开一个，慢慢逛</p>
+
+  <a class="card" href="garden.html">
+    <span class="ico">✦</span>
+    <strong>情绪小花园</strong>
+    <small>把心事写成星星放飞，还有日记、时光信箱和今日寄语。</small>
+  </a>
+
+  <a class="card" href="love.html">
+    <span class="ico">🌿</span>
+    <strong>我们的温柔时光</strong>
+    <small>纪念页，那些一起走过的日子都收在这里。</small>
+  </a>
+
+  <a class="card" href="islet.html">
+    <span class="ico">📰</span>
+    <strong>islet 晨报</strong>
+    <small>复古新闻纸特刊：今日新刊架、天气与每天的一小段空白。</small>
+  </a>
+
+  <a class="card" href="window.html">
+    <span class="ico">🪟</span>
+    <strong>幽幽的窗 · 窗台晨报</strong>
+    <small>摩天轮摆件版：留言板、拍立得墙和横线日记本都收在这里。</small>
+  </a>
+
+  <p class="foot">只在这台手机上，只有你能打开。</p>
+</div>
+</body>
+</html>
